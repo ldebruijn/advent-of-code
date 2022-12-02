@@ -5,33 +5,27 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 )
 
 func main() {
-	input := loadInput()
+	input := loadInput2()
 
-	mostCalories := 0
+	sort.Sort(sort.Reverse(sort.IntSlice(input)))
 
-	for i := range input {
-		elf := input[i]
+	total := 0
 
-		calories := 0
-
-		for food := range elf {
-			calories += elf[food]
-		}
-
-		if calories > mostCalories {
-			mostCalories = calories
-		}
+	for i := range input[:3] {
+		total += input[i]
 	}
 
-	log.Println("Most calories", mostCalories)
+	log.Printf("Most calories %v", input[:3])
+	log.Printf("top 3 %d", total)
 }
 
-func loadInput() [][]int {
-	var input [][]int
+func loadInput2() []int {
+	var input []int
 
 	path, err := filepath.Abs("2022/cmd/1/input.txt")
 
@@ -43,14 +37,14 @@ func loadInput() [][]int {
 	scanner := bufio.NewScanner(file)
 	// optionally, resize scanner's capacity for lines over 64K, see next example
 
-	calories := []int{}
+	calories := 0
 
 	for scanner.Scan() {
 		text := scanner.Text()
 
 		if text == "" {
 			input = append(input, calories)
-			calories = []int{}
+			calories = 0
 			continue
 		}
 
@@ -60,7 +54,7 @@ func loadInput() [][]int {
 			continue
 		}
 
-		calories = append(calories, value)
+		calories += value
 	}
 
 	if err := scanner.Err(); err != nil {
